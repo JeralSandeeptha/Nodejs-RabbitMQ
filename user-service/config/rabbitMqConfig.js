@@ -11,7 +11,12 @@ const connectRabbitMQ = async () => {
   try {
     const connection = await amqplib.connect(rabbitmqConfig); 
     const channel = await connection.createChannel();
-    console.log('User service rabbitmq server connected and channel created');
+    // console.log('User service rabbitmq server connected and channel created');
+    console.log(`
+        ================================================
+           RabbitMQ Server Configured - User Service
+        ================================================
+    `);
     return channel;
   } catch (error) {
     console.error('RabbitMQ connection error:', error);

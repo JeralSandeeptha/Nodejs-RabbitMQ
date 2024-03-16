@@ -38,6 +38,18 @@ const getPost = async (req, res) => {
 const deletePost = async (req, res) => {
     try {
         await PostSchema.findByIdAndDelete(req.params.postId);
+
+        // Prepare message content 
+        const message = {
+            postId: req.params.postId,
+            userId: req.body.userId,
+        };
+
+        (await channel).assertQueue("post-user-delete-post");
+        (await channel).sendToQueue("post-user-delete-post", Buffer.from(JSON.stringify(message)));
+
+        console.log("Post and User IDs sent successfully to post-user queue for remove postId from user's posts array", message);
+
         return res.status(204).json({
             statusCode: 204,
             message: "Delete post query was successful",
@@ -66,10 +78,10 @@ const createPost = async (req, res) => {
             userId: savedPost.user,
         };
 
-        (await channel).assertQueue("post-user");
-        (await channel).sendToQueue("post-user", Buffer.from(JSON.stringify(message)));
+        (await channel).assertQueue("post-user-create-post");
+        (await channel).sendToQueue("post-user-create-post", Buffer.from(JSON.stringify(message)));
 
-        console.log("Post and User IDs sent successfully to post-user queue", message);
+        console.log("Post and User IDs sent successfully to post-user queue for add postId to user's posts array", message);
 
         return res.status(200).json({
           statusCode: 200,
