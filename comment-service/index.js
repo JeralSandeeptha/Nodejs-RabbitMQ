@@ -1,9 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
-const { connectRabbitMQ } = require('./config/rabbitMqConfig');
+const commentRoutes = require('./routes/commenRoutes');
 
 const app = express();
+
+app.use(express.json());
+app.use('/api/v1/comment', commentRoutes);
 
 mongoose.connect('mongodb://127.0.0.1:27017/comments')
     .then( () => {
@@ -17,8 +20,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/comments')
     .catch( (error) => {
         console.log(error.message);
     });
-
-connectRabbitMQ();    
 
 app.listen(3002, () => {
     console.log(`

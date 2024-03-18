@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const postRoutes = require('./routes/postRoutes');
+const { consumeDataCreateComment, consumeDataDeleteComment } = require('./config/consumeRabbitMQ');
 
 const app = express();
 
@@ -16,6 +17,9 @@ mongoose.connect('mongodb://127.0.0.1:27017/posts')
     .catch( (error) => {
         console.log(error.message);
     });
+
+consumeDataCreateComment();
+consumeDataDeleteComment();
 
 app.listen(3003, () => {
     console.log('Post service is running at port 3003');
